@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 const colors = document.getElementsByClassName('jsColor');
 const range = document.getElementById('jsRange');
 const mode = document.getElementById('jsMode');
+const saveBtn = document.getElementById('jsSave');
 
 // options
 const initialColor = '#2c2c2c';
@@ -10,6 +11,10 @@ const canvasSize = 700;
 
 canvas.width = canvasSize;
 canvas.height = canvasSize;
+
+// initialize
+ctx.fillStyle = '#fff';
+ctx.fillRect(0, 0, canvasSize, canvasSize);
 
 ctx.strokeStyle = initialColor;
 ctx.fillStyle = initialColor;
@@ -67,12 +72,25 @@ function handleCanvasClick() {
     }
 };
 
+function handleContextMenu(e) {
+    e.preventDefault();
+};
+
+function handleSaveClick() {
+    const image = canvas.toDataURL();
+    const link = document.createElement('a');
+    link.href = image;
+    link.download = 'paint-js-img🐶';
+    link.click();
+};
+
 if(canvas) {
     canvas.addEventListener('mousemove', onMouseMove);
     canvas.addEventListener('mousedown', startPainting);
     canvas.addEventListener('mouseup', stopPainting);
     canvas.addEventListener('mouseleave', stopPainting);
     canvas.addEventListener('click', handleCanvasClick);
+    canvas.addEventListener('contextmenu', handleContextMenu); // 마우스 우클릭해서 context menu가 생길 때 발생하는 이벤트
 }
 
 const colorArray = Array.from(colors).forEach(color => color.addEventListener('click', handleColorClick));
@@ -86,4 +104,8 @@ if(range) {
 
 if(mode) {
     mode.addEventListener('click', handleModeClick);
+}
+
+if(saveBtn) {
+    saveBtn.addEventListener('click', handleSaveClick);
 }
