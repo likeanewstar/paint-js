@@ -2,24 +2,21 @@ const canvas = document.getElementById('jsCanvas');
 const ctx = canvas.getContext('2d');
 const colors = document.getElementsByClassName('jsColor');
 const range = document.getElementById('jsRange');
+const mode = document.getElementById('jsMode');
 
-canvas.width = 700;
-canvas.height = 700;
+// options
+const initialColor = '#2c2c2c';
+const canvasSize = 700;
 
-ctx.strokeStyle = '#2c2c2c';
+canvas.width = canvasSize;
+canvas.height = canvasSize;
+
+ctx.strokeStyle = initialColor;
+ctx.fillStyle = initialColor;
 ctx.lineWidth = 2.5;
 
 let painting = false;
-
-function handleRangeChange(e) {
-    const size = e.target.value;
-    ctx.lineWidth = size;
-};
-
-function handleColorClick(e) {
-    const color = e.target.style.backgroundColor;
-    ctx.strokeStyle = color;
-};
+let filling = false;
 
 function stopPainting() {
     painting = false;
@@ -43,11 +40,39 @@ function onMouseMove(e) {
     }
 };
 
+function handleColorClick(e) {
+    const color = e.target.style.backgroundColor;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+};
+
+function handleRangeChange(e) {
+    const size = e.target.value;
+    ctx.lineWidth = size;
+};
+
+function handleModeClick() {
+    if (filling === false) { // fill mode
+        filling = true;
+        mode.innerText = 'Paint';
+    } else { // paint mode
+        filling = false;
+        mode.innerText = 'Fill';
+    }
+};
+
+function handleCanvasClick() {
+    if(filling) {
+        ctx.fillRect(0, 0, canvasSize, canvasSize);
+    }
+};
+
 if(canvas) {
     canvas.addEventListener('mousemove', onMouseMove);
     canvas.addEventListener('mousedown', startPainting);
     canvas.addEventListener('mouseup', stopPainting);
     canvas.addEventListener('mouseleave', stopPainting);
+    canvas.addEventListener('click', handleCanvasClick);
 }
 
 const colorArray = Array.from(colors).forEach(color => color.addEventListener('click', handleColorClick));
@@ -57,4 +82,8 @@ const colorArray = Array.from(colors).forEach(color => color.addEventListener('c
 if(range) {
     range.addEventListener('change', handleRangeChange);
     // 강의에서 니꼴라스는 change 대신 input을 사용
+}
+
+if(mode) {
+    mode.addEventListener('click', handleModeClick);
 }
